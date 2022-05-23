@@ -31,9 +31,8 @@ class Order extends Model
      * @var array
      */
     protected $allowedFilters = [
-        'id',
-        'email',
-        'product_id'
+        'receive_date',
+        'price'
     ];
 
     /**
@@ -43,7 +42,7 @@ class Order extends Model
      */
     protected $allowedSorts = [
         'id',
-        'email',
+        'receive_date',
         'price'
     ];
 

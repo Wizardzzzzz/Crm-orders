@@ -3,6 +3,7 @@
 namespace App\Orchid\Layouts\Order;
 
 use App\Models\Client;
+use App\Models\Order;
 use Orchid\Platform\Models\User;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
@@ -36,47 +37,43 @@ class OrderListLayout extends Table
             TD::make('id', __('Id'))
                 ->sort()
                 ->cantHide()
-                ->render(function (Client $client) {
-                    return $client->id;
+                ->render(function (Order $order) {
+                    return $order->id;
                 }),
 
-            TD::make('name', __('Name'))
-                ->cantHide()
-                ->render(function (Client $client) {
-                    return Link::make($client->first_name . ' ' . $client->last_name)
-                        ->route('platform.client.edit', $client);
-                }),
+            TD::make('user.name', __('Name'))
+                ->cantHide(),
+            TD::make('user.email', __('Email'))
+                ->cantHide(),
 
-            TD::make('email', __('Email'))
+            TD::make('product_id', __('Product id')),
+
+            TD::make('receive_date', __('Receive date'))
                 ->sort()
                 ->cantHide()
-                ->filter(Input::make())
-                ->render(function (Client $client) {
-                    return $client->email;
-                }),
-
-            TD::make('product_id', __('Product id'))
-                ->cantHide()
-                ->filter(Input::make())
-                ->render(function (Client $client) {
-                    return $client->product_id;
-                }),
+                ->filter(Input::make()),
 
             TD::make('price', __('Price'))
                 ->sort()
                 ->cantHide()
-                ->render(function (Client $client) {
-                    return $client->price;
-                }),
+                ->filter(Input::make()),
 
-            TD::make(__('Delete'))
+            TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
-                ->render(function (Client $client) {
-                    return Button::make(__('Delete'))
-                        ->icon('trash')
-                        ->confirm(__('Are you sure you want to delete client.'))
-                        ->method('remove', [
-                            'id' => $client->id,
+                ->width('100px')
+                ->render(function (Order $order) {
+                    return DropDown::make()
+                        ->icon('options-vertical')
+                        ->list([
+                            Link::make()
+                                ->icon('pencil')
+                                ->route('platform.systems.orders.edit', $order),
+                            Button::make(__('Delete'))
+                                ->icon('trash')
+                                ->confirm(__('Once the account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.'))
+                                ->method('remove', [
+                                    'id' => $order->id,
+                                ]),
                         ]);
                 }),
         ];

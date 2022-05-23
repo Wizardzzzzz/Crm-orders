@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\Role;
 use Orchid\Platform\Models\User as Authenticatable;
 
 class User extends Authenticatable
@@ -72,5 +73,12 @@ class User extends Authenticatable
     public function sweepstake()
     {
         return $this->hasOne(Sweepstake::class);
+    }
+
+    public function scopeOnlyClient($query)
+    {
+        return $query->whereHas('roles', function ($q) {
+            $q->where('roles.name', 'client');
+        });
     }
 }

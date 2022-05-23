@@ -2,9 +2,11 @@
 
 namespace App\Orchid\Screens;
 
+use App\Models\SweepstakeWinner;
+use App\Orchid\Layouts\SweepstakeWinnersListLayout;
 use Orchid\Screen\Screen;
 
-class CreatingDrawsScreen extends Screen
+class SweepstakeWinnersScreen extends Screen
 {
     /**
      * Query data.
@@ -13,7 +15,11 @@ class CreatingDrawsScreen extends Screen
      */
     public function query(): iterable
     {
-        return [];
+        return [
+            'sweepstake_winners' => SweepstakeWinner::with('user')
+                ->defaultSort('id', 'asc')
+                ->paginate(),
+        ];
     }
 
     /**
@@ -23,7 +29,7 @@ class CreatingDrawsScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'CreatingDrawsScreen';
+        return 'Sweepstake winners';
     }
 
     /**
@@ -43,6 +49,8 @@ class CreatingDrawsScreen extends Screen
      */
     public function layout(): iterable
     {
-        return [];
+        return [
+            SweepstakeWinnersListLayout::class
+        ];
     }
 }

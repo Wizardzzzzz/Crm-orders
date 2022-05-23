@@ -4,11 +4,14 @@ namespace App\Orchid\Screens\Order;
 
 use App\Models\Order;
 use App\Models\Sweepstake;
+use App\Models\User;
 use Illuminate\Http\Request;
 use \Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Relation;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
@@ -48,20 +51,20 @@ class OrderEditScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Button::make('Create client')
+            Button::make('Create order')
                 ->icon('pencil')
                 ->method('createOrUpdate')
-                ->canSee(!$this->client->exists),
+                ->canSee(!$this->order->exists),
 
             Button::make('Update')
                 ->icon('note')
                 ->method('createOrUpdate')
-                ->canSee($this->client->exists),
+                ->canSee($this->order->exists),
 
             Button::make('Remove')
                 ->icon('trash')
                 ->method('remove')
-                ->canSee($this->client->exists),
+                ->canSee($this->order->exists),
         ];
     }
 
@@ -74,43 +77,23 @@ class OrderEditScreen extends Screen
     {
         return [
             Layout::rows([
-                Input::make('client.first_name')
+                Relation::make('order.user_id')
+                    ->fromModel(User::class, 'name')
+                    ->applyScope('onlyClient')
                     ->required()
-                    ->type('text')
-                    ->title('First name')
-                    ->placeholder('First name'),
+                    ->title(__('User')),
 
-                Input::make('client.last_name')
-                    ->required()
-                    ->type('text')
-                    ->title('Last name')
-                    ->placeholder('Last name'),
-
-                Input::make('client.phone')
-                    ->required()
-                    ->mask([
-                        'mask' => '+(999) 99 99 99 999',
-                        'removeMaskOnSubmit' => true,
-                    ])
-                    ->title('Phone number'),
-
-                Input::make('client.email')
-                    ->required()
-                    ->type('email')
-                    ->title('Email')
-                    ->placeholder('Email'),
-
-                Input::make('client.product_id')
+                Input::make('order.product_id')
                     ->required()
                     ->type('number')
                     ->title('Product id'),
 
-                DateTimer::make('client.receive_date')
+                DateTimer::make('order.receive_date')
                     ->required()
                     ->title('Receive date')
                     ->enableTime(),
 
-                Input::make('client.price')
+                Input::make('order.price')
                     ->required()
                     ->title('Price')
                     ->mask([
@@ -124,33 +107,37 @@ class OrderEditScreen extends Screen
         ];
     }
 
-    public function createOrUpdate(Client $client, Request $request): RedirectResponse
+    public function createOrUpdate(Order $order, Request $request): RedirectResponse
     {
-        $client->fill($request->get('client'))->save();
-        if ($client->wasRecentlyCreated) {
-            $sweepstakeUser = Sweepstake::firstOrNew(['client_id', $client->id]);
-            $sweepstakeUser->amount += $request->price;
-            $sweepstakeUser->save();
-        }
+        DB::transaction(function() use ($order, $request) {
+            $order->fill($request->get('order'))->save();
+            if ($order->wasRecentlyCreated) {
+                $sweepstakeUser = Sweepstake::firstOrNew(['user_id' => $order->user_id]);
+                $sweepstakeUser->amount += $order->price;
+                $sweepstakeUser->save();
+            }
+        });
 
-        Alert::info('You have successfully saved the clients.');
+        Alert::info('You have successfully saved the order.');
 
-        return redirect()->route('platform.systems.clients');
+        return redirect()->route('platform.systems.orders');
     }
 
-    public function remove(Client $client): RedirectResponse
+    public function remove(Order $order): RedirectResponse
     {
-        $sweepstakeUser = Sweepstake::where('client_id', $client->id)->first();
+        $sweepstakeUser = Sweepstake::where('user_id', $order->user_id)->first();
         if ($sweepstakeUser) {
             if($sweepstakeUser->amount <= 0) {
                 $sweepstakeUser->delete();
             } else {
-                $sweepstakeUser->amount -= $client->price;
+                $sweepstakeUser->amount -= $order->price;
+                $sweepstakeUser->save();
             }
         }
 
-        $client->delete();
-        Alert::info('You have successfully deleted the clients.');
-        return redirect()->route('platform.systems.clients');
+        $order->delete();
+        Alert::info('You have successfully deleted the order.');
+
+        return redirect()->route('platform.systems.orders');
     }
 }

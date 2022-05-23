@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 use App\Orchid\Screens\AnalyticsAndReportsScreen;
-use App\Orchid\Screens\CreatingDrawsScreen;
+use App\Orchid\Screens\SweepstakeScreen;
+use App\Orchid\Screens\SweepstakeWinnersScreen;
 use App\Orchid\Screens\Examples\ExampleCardsScreen;
 use App\Orchid\Screens\Examples\ExampleChartsScreen;
 use App\Orchid\Screens\Examples\ExampleFieldsAdvancedScreen;
@@ -41,9 +42,11 @@ Route::screen('/main', PlatformScreen::class)
 Route::screen('graphs', AnalyticsAndReportsScreen::class)
     ->name('platform.systems.AnalyticsAndReports');
 
-//Creating draws-розіграш
-Route::screen('draws', CreatingDrawsScreen::class)
-    ->name('platform.systems.CreatingDrawsScreen');
+Route::screen('sweepstake', SweepstakeScreen::class)
+    ->name('platform.systems.sweepstake');
+
+Route::screen('sweepstake-winners', SweepstakeWinnersScreen::class)
+    ->name('platform.systems.sweepstake.winners');
 
 // Orders
 Route::screen('orders', OrderListScreen::class)

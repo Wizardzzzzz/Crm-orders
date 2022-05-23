@@ -45,7 +45,11 @@ class PlatformProvider extends OrchidServiceProvider
 
             Menu::make(__('sweepstake'))
                 ->icon('dropbox')
-                ->route('platform.systems.CreatingDrawsScreen'),
+                ->route('platform.systems.sweepstake'),
+
+            Menu::make(__('sweepstake winners'))
+                ->icon('dropbox')
+                ->route('platform.systems.sweepstake.winners'),
 //
 //            Menu::make('Dropdown menu')
 //                ->icon('code')
