@@ -4,6 +4,7 @@ namespace App\Orchid\Screens\Order;
 
 use App\Models\Order;
 use App\Models\Sweepstake;
+use App\Orchid\Layouts\Order\OrderListLayout;
 use App\Orchid\Layouts\User\UserFiltersLayout;
 use Orchid\Platform\Models\User;
 use Orchid\Screen\Actions\Link;
@@ -63,36 +64,15 @@ class OrderListScreen extends Screen
     public function layout(): iterable
     {
         return [
-            Layout::table('orders', [
-                TD::make('id', __('Id'))
-                    ->sort()
-                    ->cantHide(),
-                TD::make('user.name', __('Name'))
-                    ->cantHide(),
-                TD::make('user.email', __('Email'))
-                    ->cantHide(),
-                TD::make('product_id', __('Product id')),
-                TD::make('receive_date', __('Receive date'))
-                    ->sort()
-                    ->cantHide()
-                    ->filter(Input::make()),
-                TD::make('price', __('Price'))
-                    ->sort()
-                    ->cantHide()
-                    ->filter(Input::make()),
-                TD::make('action')
-                    ->render(function (Order $order) {
-                        return Link::make()
-                            ->icon('pencil')
-                            ->route('platform.systems.orders.edit', $order);
-                    }),
-            ])
+            OrderListLayout::class
         ];
     }
 
     public function remove(Order $order)
     {
-        $sweepstakeUser = Sweepstake::where('user_id', $order->user_id)->first();
+        $sweepstakeUser = Sweepstake::where('user_id', $order->user_id)
+            ->whereDate('created_at', '>=', $order->created_at)
+            ->first();
         if ($sweepstakeUser) {
             if($sweepstakeUser->amount <= 0) {
                 $sweepstakeUser->delete();

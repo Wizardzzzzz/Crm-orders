@@ -126,6 +126,7 @@ class OrderEditScreen extends Screen
     public function remove(Order $order): RedirectResponse
     {
         $sweepstakeUser = Sweepstake::where('user_id', $order->user_id)->first();
+
         if ($sweepstakeUser) {
             if($sweepstakeUser->amount <= 0) {
                 $sweepstakeUser->delete();

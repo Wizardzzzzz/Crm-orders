@@ -24,7 +24,7 @@ class OrderListLayout extends Table
      *
      * @var string
      */
-    protected $target = 'clients';
+    protected $target = 'orders';
 
     /**
      * Get the table cells to be displayed.
@@ -65,7 +65,7 @@ class OrderListLayout extends Table
                     return DropDown::make()
                         ->icon('options-vertical')
                         ->list([
-                            Link::make()
+                            Link::make(__('Edit'))
                                 ->icon('pencil')
                                 ->route('platform.systems.orders.edit', $order),
                             Button::make(__('Delete'))
