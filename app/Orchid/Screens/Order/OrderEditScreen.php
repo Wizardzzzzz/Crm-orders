@@ -82,17 +82,14 @@ class OrderEditScreen extends Screen
                     ->applyScope('onlyClient')
                     ->required()
                     ->title(__('User')),
-
                 Input::make('order.product_id')
                     ->required()
                     ->type('number')
                     ->title('Product id'),
-
                 DateTimer::make('order.receive_date')
                     ->required()
                     ->title('Receive date')
                     ->enableTime(),
-
                 Input::make('order.price')
                     ->required()
                     ->title('Price')
@@ -126,9 +123,8 @@ class OrderEditScreen extends Screen
     public function remove(Order $order): RedirectResponse
     {
         $sweepstakeUser = Sweepstake::where('user_id', $order->user_id)->first();
-
         if ($sweepstakeUser) {
-            if($sweepstakeUser->amount <= 0) {
+            if($sweepstakeUser->amount >= 0) {
                 $sweepstakeUser->delete();
             } else {
                 $sweepstakeUser->amount -= $order->price;

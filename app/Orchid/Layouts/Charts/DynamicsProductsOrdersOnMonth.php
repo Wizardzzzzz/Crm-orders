@@ -11,7 +11,7 @@ class DynamicsProductsOrdersOnMonth extends Chart
      *
      * @var string
      */
-    protected $title = 'Super Chart';
+    protected $title = 'Dynamics of receiving orders on month';
 
     /**
      * Available options:

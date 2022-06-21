@@ -54,7 +54,6 @@ class UserListLayout extends Table
                 ->render(function (User $user) {
                     return $user->updated_at->toDateTimeString();
                 }),
-
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
@@ -62,14 +61,15 @@ class UserListLayout extends Table
                     return DropDown::make()
                         ->icon('options-vertical')
                         ->list([
-
                             Link::make(__('Edit'))
                                 ->route('platform.systems.users.edit', $user->id)
                                 ->icon('pencil'),
-
                             Button::make(__('Delete'))
                                 ->icon('trash')
-                                ->confirm(__('Once the account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.'))
+                                ->confirm(__('Once the account is deleted,
+                                all of its resources and data will be permanently deleted.
+                                 Before deleting your account, please download any data or
+                                 information that you wish to retain.'))
                                 ->method('remove', [
                                     'id' => $user->id,
                                 ]),

@@ -3,6 +3,7 @@
 namespace App\Orchid\Screens;
 
 use App\Models\Client;
+use App\Models\Order;
 use App\Orchid\Layouts\Charts\DynamicsProductsOrders;
 use App\Orchid\Layouts\Charts\DynamicsProductsOrdersOnMonth;
 use App\Orchid\Layouts\Charts\PersentagePriceClients;
@@ -27,9 +28,9 @@ class AnalyticsAndReportsScreen extends Screen
         $end = Carbon::now()->subDay(1);
 
         return [
-            'persentagePrice' => Client::countForGroup('Price')->toChart(),
-            'interviewedProduct' => [Client::countByDays($week, $end_week, 'receive_date')->toChart('Date of receiving on week'),],
-            'interviewedProductOnMonth' => [Client::countByDays($start, $end, 'receive_date')->toChart('Date of receiving on month'),]
+            'persentagePrice' => Order::countForGroup('Price')->toChart(),
+            'interviewedProduct' => [Order::countByDays($week, $end_week, 'receive_date')->toChart('Date of receiving on week'),],
+            'interviewedProductOnMonth' => [Order::countByDays($start, $end, 'receive_date')->toChart('Date of receiving on month'),]
 
         ];
     }

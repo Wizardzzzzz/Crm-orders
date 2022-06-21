@@ -20,7 +20,6 @@ return new class extends Migration
             $table->timestamp('receive_date')->nullable()->comment('Дата отримання');
             $table->float('price')->comment('Сума оплати');
             $table->timestamps();
-
             $table->foreign('user_id')->references('id')->on('users');
         });
     }

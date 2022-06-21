@@ -27,7 +27,8 @@ class AdminSeeder extends Seeder
 
         DB::table('role_users')->insert([
             'user_id' => $user_id,
-            'role_id' => DB::table('roles')->where('slug', 'admin')->first('id')->id
+            'role_id' => DB::table('roles')
+                ->where('slug', 'admin')->first('id')->id
         ]);
     }
 }

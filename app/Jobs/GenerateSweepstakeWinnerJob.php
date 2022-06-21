@@ -50,7 +50,7 @@ class GenerateSweepstakeWinnerJob
 
                 $winner = $this->box[array_rand($this->box)];
                 $user = User::find($winner);
-
+//                dd($this->box);
                 SweepstakeWinner::create([
                     'user_id' => $winner
                 ]);
